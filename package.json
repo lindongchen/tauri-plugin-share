@@ -1,7 +1,11 @@
 {
   "name": "tauri-plugin-share",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "author": "lindongchen,zhangcheng",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/lindongchen/tauri-plugin-share"
+	},
   "description": "A Tauri share plugin",
   "type": "module",
   "types": "./dist-js/index.d.ts",
