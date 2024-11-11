@@ -1,6 +1,6 @@
 [package]
 name = "tauri-plugin-share"
-version = "0.1.0"
+version = "2.0.1"
 authors = [ "flomesh" ]
 description = "A Tauri share plugin"
 edition = "2021"

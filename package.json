@@ -1,6 +1,6 @@
 {
-  "name": "tauri-plugin-share-api",
-  "version": "0.1.0",
+  "name": "@tauri-apps/plugin-share",
+  "version": "2.0.1",
   "author": "You",
   "description": "",
   "type": "module",
