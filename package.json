@@ -1,5 +1,5 @@
 {
-  "name": "@tauri-apps/plugin-share",
+  "name": "tauri-plugin-share",
   "version": "2.0.2",
   "author": "lindongchen,zhangcheng",
   "description": "A Tauri share plugin",
