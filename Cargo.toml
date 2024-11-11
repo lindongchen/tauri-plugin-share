@@ -1,7 +1,7 @@
 [package]
 name = "tauri-plugin-share"
-version = "2.0.1"
-authors = [ "lindongchen" ]
+version = "2.0.2"
+authors = [ "lindongchen","zhangcheng" ]
 description = "A Tauri share plugin"
 edition = "2021"
 rust-version = "1.77.2"

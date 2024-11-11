@@ -1,8 +1,8 @@
 {
   "name": "@tauri-apps/plugin-share",
-  "version": "2.0.1",
-  "author": "You",
-  "description": "",
+  "version": "2.0.2",
+  "author": "lindongchen,zhangcheng",
+  "description": "A Tauri share plugin",
   "type": "module",
   "types": "./dist-js/index.d.ts",
   "main": "./dist-js/index.cjs",
