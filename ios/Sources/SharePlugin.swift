@@ -19,6 +19,12 @@ struct FileInfo: Codable {
     let data: Data
 }
 
+struct ShareResponse: Codable {
+  let value: String?
+	var files: [FileInfo]?
+	var paths: [String]?
+}
+
 class SharePlugin: Plugin {
 	
 	private func getPath(fileURL: String) -> String? {
@@ -157,17 +163,18 @@ class SharePlugin: Plugin {
   @objc public func shareFile(_ invoke: Invoke) throws {
     let args = try invoke.parseArgs(ShareArgs.self)
 		self.shareFileByUrl(fileURL: args.path)
-		NSLog("[shareFile]: \(args.path)")
 		invoke.resolve(true)
   }
 	
 	@objc public func getSharedFiles(_ invoke: Invoke) throws {
 	  let args = try invoke.parseArgs(ShareArgs.self)
-		invoke.resolve(self.fetchAndDeleteFilesInAppGroupDirectory(group: (args.group ?? ""), folder:args.path))
+		let resp = ShareResponse(value: nil, files: self.fetchAndDeleteFilesInAppGroupDirectory(group: (args.group ?? ""), folder:args.path), paths: nil);
+		invoke.resolve(resp)
 	}
 	@objc public func getSharedFilesPath(_ invoke: Invoke) throws {
 	  let args = try invoke.parseArgs(ShareArgs.self)
-		invoke.resolve(self.fetchAndDeleteFilesPathInAppGroupDirectory(group: (args.group ?? ""), folder:args.path))
+		let resp = ShareResponse(value: nil, files: nil, paths: self.fetchAndDeleteFilesPathInAppGroupDirectory(group: (args.group ?? ""), folder:args.path));
+		invoke.resolve(resp)
 	}
 	
 }
