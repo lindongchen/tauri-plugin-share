@@ -8,13 +8,13 @@ import app.tauri.annotation.Command
 import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.TauriPlugin
 import app.tauri.plugin.JSObject
+import app.tauri.plugin.JSArray
 import app.tauri.plugin.Plugin
 import app.tauri.plugin.Invoke
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import com.google.gson.JsonArray
-import com.google.gson.Gson
+import org.json.JSONArray
 
 @InvokeArg
 class ShareOptions {
@@ -40,7 +40,7 @@ class SharePlugin(private val activity: Activity): Plugin(activity) {
 		val context = activity.applicationContext
 	 
 		val file = File(args.path)
-        println("SharePlugin getSharedFiles: $args.path")
+		println("SharePlugin getSharedFiles: $args.path")
 		val uri = FileProvider.getUriForFile(
 			context,
 			"${context.packageName}.fileprovider",
@@ -58,27 +58,44 @@ class SharePlugin(private val activity: Activity): Plugin(activity) {
 		val args = invoke.parseArgs(ShareOptions::class.java)
 		val context = activity.applicationContext
 		val appDir = context.filesDir
-        val sharedPath = File(appDir, args.path)
+		val sharedPath = File(appDir, args.path)
 
-		val paths = ArrayList<String>()
+		val paths: MutableList<String> = ArrayList()
 		sharedPath.listFiles()?.forEach { file ->
-        	println("SharePlugin getSharedFilesPath: $file")
-            paths.add(file.absolutePath)
-        }
+			println("SharePlugin getSharedFilesPath: $file")
+			paths.add(file.absolutePath)
+		}
 		val ret = JSObject()
-		ret.put("paths", paths.joinToString(";"))
+		ret.put("paths", JSArray.from(paths.toTypedArray()))
 		invoke.resolve(ret)
         
 	}
 
+	private fun fromU8Array(byteArray: ByteArray): JSONArray {
+			val json = JSONArray()
+			for (byte in byteArray) {
+					json.put(byte)
+			}
+			return json
+	}
+	
+	private fun recordToJson(record: ShareFile): JSObject {
+		val json = JSObject()
+		json.put("name", record.name)
+		json.put("size", record.size)
+		json.put("mime", record.mime)
+		json.put("data", fromU8Array(record.data))
+		return json
+	}
+	
 	@Command
 	fun getSharedFiles(invoke: Invoke) {
 		val args = invoke.parseArgs(ShareOptions::class.java)
 		val context = activity.applicationContext
 		val appDir = context.filesDir
-        val sharedPath = File(appDir, args.path)
+		val sharedPath = File(appDir, args.path)
 
-		val files = ArrayList<ShareFile>()
+		val files: MutableList<ShareFile> = ArrayList()
 		sharedPath.listFiles()?.forEach { file ->
 			val path: Path = Paths.get(file.absolutePath)
 			val mimeType = Files.probeContentType(path)
@@ -88,15 +105,14 @@ class SharePlugin(private val activity: Activity): Plugin(activity) {
 			fileObj.size = file.length()
 			fileObj.mime = mimeType
 			fileObj.data = fileData
-            files.add(fileObj)
+			files.add(fileObj)
 
 			file.delete()
-        }
-        println("SharePlugin getSharedFiles: $files")
-		val gson = Gson()
-		val jsonArray = gson.toJsonTree(files).asJsonArray
+		}
+		val filesArray = Array(files.size) { index -> recordToJson(files[index]) }
+		println("SharePlugin getSharedFiles: $files")
 		val ret = JSObject()
-		ret.put("files", jsonArray)
+		ret.put("files", JSArray.from(filesArray))
 		invoke.resolve(ret)
         
 	}
